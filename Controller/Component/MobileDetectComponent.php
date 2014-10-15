@@ -14,6 +14,7 @@
  */
 
 App::uses('Component', 'Controller');
+App::uses('MobileDetect', 'MobileDetect.Lib');
 
 /**
  * MobileDetectComponent
@@ -21,22 +22,6 @@ App::uses('Component', 'Controller');
  * @package		MobileDetectComponent
  */
 class MobileDetectComponent extends Component {
-
-/**
- * The state of the Mobile_Detect class
- *
- * @var bool
- * @access public
- */
-	public $loaded = false;
-
-/**
- * The MobileDetect object
- *
- * @var object
- * @access public
- */
-	public $MobileDetect = null;
 
 /**
  * Loads the Mobile_Detect class, runs the given Mobile_Detect method. Uses
@@ -48,22 +33,8 @@ class MobileDetectComponent extends Component {
  * @throws CakeException
  */
 	public function detect($method = 'isMobile', $args = null) {
-		if (!class_exists('Mobile_Detect')) {
-			// load the vendor class if it hasn't allready been autoloaded.
-			$loaded = App::import('Vendor', 'MobileDetect.MobileDetect', array(
-				'file' => 'MobileDetect' . DS . 'Mobile_Detect.php')
-			);
-			// abort if vendor class wasn't autoloaded and can't be found.
-			if (!$loaded) {
-				throw new CakeException('Mobile_Detect is missing or could not be loaded.');
-			}
-		}
-		// instantiate once per method call
-		if (!($this->MobileDetect instanceof Mobile_Detect)) {
-			$this->MobileDetect = new Mobile_Detect();
-		}
-
-		return $this->MobileDetect->{$method}($args);
+		if(!isset($MobileDetect))
+			$MobileDetect = new MobileDetect();
+		return $MobileDetect::detect($method, $args);
 	}
-
 }
